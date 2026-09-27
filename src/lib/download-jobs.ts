@@ -15,7 +15,7 @@ export async function processDownloadJob(jobId:string){
   const zip=archiver("zip",{zlib:{level:0}});const out=new PassThrough();zip.pipe(out);
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SECRET_KEY;if(!url||!key)throw new Error("Supabase credentials missing");
   const path=`${job.event_id}/downloads/${jobId}.zip`;
-  const upload=fetch(`${url}/storage/v1/object/${bucket}/${path}`,{method:"POST",headers:{Authorization:`Bearer ${key}`,apikey:key,"Content-Type":"application/zip","x-upsert":"true"},body:out as any,duplex:"half" as any});
+  const uploadInit:any={method:"POST",headers:{Authorization:`Bearer ${key}`,apikey:key,"Content-Type":"application/zip","x-upsert":"true"},body:out,duplex:"half"};const upload=fetch(`${url}/storage/v1/object/${bucket}/${path}`,uploadInit);
   for(const p of photos){
    const{data,error}=await s.storage.from(bucket).createSignedUrl(p.storage_path,900);if(error)throw error;
    const r=await fetch(data.signedUrl);if(!r.ok||!r.body)throw new Error("Unable to read "+p.original_name);
