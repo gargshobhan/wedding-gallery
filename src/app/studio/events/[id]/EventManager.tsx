@@ -64,8 +64,8 @@ export default function EventManager({ id }: { id: string }) {
     <section className="manageGrid">
       <article className="manageCard"><span className="eyebrow">Gallery access</span><h3>{item.access.replace("_", " ")}</h3>{item.pin && <p>PIN: <b>{item.pin}</b></p>}<p className="mutedText">Print this QR at the venue or share the link on WhatsApp.</p></article>
       <article className="manageCard"><span className="eyebrow">Photos</span><h3>0 uploaded</h3><button className="button">Upload photographs</button><p className="mutedText">Cloud upload comes in the storage milestone.</p></article>
-      <article className="manageCard"><span className="eyebrow">Album</span><h3>Selection open</h3><p>Couples shortlist photographs without sending image numbers over WhatsApp.</p></article>
-      <article className="manageCard"><span className="eyebrow">Guests</span><h3>Guest uploads</h3><p>Collect phone photographs in a separate guest collection.</p><button className="ghost">Enable guest uploads</button></article>
+      <article className="manageCard"><span className="eyebrow">Album</span><h3>Couple selection</h3><p>Review the exact photographs submitted by the couple and export the selection.</p><Link className="ghost" href={"/studio/events/"+id+"/album"}>Review album selection</Link></article>
+      <article className="manageCard"><span className="eyebrow">Guests</span><h3>Guest uploads</h3><p>Review contributions from friends and family separately from professional photographs.</p><Link className="ghost" href={"/studio/events/"+id+"/guest-uploads"}>Review guest uploads</Link></article>
     </section>
   </main>;
 }
