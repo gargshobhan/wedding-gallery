@@ -2,7 +2,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { loadEvents, saveEvents, WeddingEvent } from "@/lib/events";
+import { WeddingEvent } from "@/lib/events";
 import { uploadProfessionalPhoto } from "@/lib/storage";
 
 export default function EventManager({ id }: { id: string }) {
@@ -12,7 +12,7 @@ export default function EventManager({ id }: { id: string }) {
   const [photoCount,setPhotoCount]=useState(0);const[downloadsEnabled,setDownloadsEnabled]=useState(false); const [uploading,setUploading]=useState(false); const [uploadError,setUploadError]=useState(""); const photoInput=useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setItem(loadEvents().find((event) => event.id === id) || null);
+    fetch("/api/studio/events",{cache:"no-store"}).then(r=>r.json()).then(x=>setItem(Array.isArray(x)?x.find((event:WeddingEvent)=>event.id===id)||null:null)).catch(()=>setItem(null));
   }, [id]);
 
   const galleryPath = item ? "/gallery/" + item.slug : "";
@@ -33,11 +33,10 @@ export default function EventManager({ id }: { id: string }) {
     return <main className="emptyState"><h1>Event not found</h1><Link className="button" href="/studio">Back</Link></main>;
   }
 
-  function publish() {
+  async function publish() {
     if (!item) return;
     const next = { ...item, status: "Live" as const };
-    setItem(next);
-    saveEvents(loadEvents().map((event) => event.id === id ? next : event));
+    const r=await fetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({status:"Live"})});if(r.ok)setItem(next);
   }
 
   async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await fetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}
