@@ -40,7 +40,9 @@ export default function EventManager({ id }: { id: string }) {
     saveEvents(loadEvents().map((event) => event.id === id ? next : event));
   }
 
-  async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await fetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}\n\n  async function copy() {
+  async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await fetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}
+
+  async function copy() {
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
