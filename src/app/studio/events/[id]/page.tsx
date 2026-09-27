@@ -1,0 +1,1 @@
+import EventManager from "./EventManager";export default function Page({params}:{params:{id:string}}){return <EventManager id={params.id}/>} 
