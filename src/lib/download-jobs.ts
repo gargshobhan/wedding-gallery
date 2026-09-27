@@ -11,7 +11,7 @@ export async function processDownloadJob(jobId:string){
   await s.from("download_jobs").update({status:"PROCESSING",error:null}).eq("id",jobId);
   let q=s.from("photos").select("id,storage_path,proof_storage_path,original_name,size_bytes").eq("event_id",job.event_id).eq("source","PROFESSIONAL");
   if(!job.photo_ids?.length)throw new Error("Download job has no photos");q=q.in("id",job.photo_ids);
-  const{data:photos,error:pe}=await q;if(pe)throw pe;photos=(photos||[]).filter((p:any)=>p.proof_storage_path&&!p.storage_path.startsWith("demo/"));if(!photos.length)throw new Error("No photos to download");if(photos.length!==job.photo_ids.length)throw new Error("One or more downloadable photos are no longer available");
+  const{data:photoRows,error:pe}=await q;if(pe)throw pe;const photos=(photoRows||[]).filter((p:any)=>p.proof_storage_path&&!p.storage_path.startsWith("demo/"));if(!photos.length)throw new Error("No photos to download");if(photos.length!==job.photo_ids.length)throw new Error("One or more downloadable photos are no longer available");
   const zip=archiver("zip",{zlib:{level:0}});const out=new PassThrough();zip.pipe(out);
   const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.SUPABASE_SECRET_KEY;if(!url||!key)throw new Error("Supabase credentials missing");
   const path=`${job.event_id}/downloads/${jobId}.zip`;
