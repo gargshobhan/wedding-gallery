@@ -1,0 +1,18 @@
+create extension if not exists pgcrypto;
+create type public.event_access as enum ('PUBLIC_LINK','PIN','PRIVATE');
+create type public.event_status as enum ('DRAFT','LIVE');
+create type public.photo_source as enum ('PROFESSIONAL','GUEST');
+create table public.studios(id uuid primary key default gen_random_uuid(),name text not null,slug text unique not null,location text,whatsapp_number text,created_at timestamptz not null default now());
+create table public.studio_members(studio_id uuid references public.studios on delete cascade,user_id uuid references auth.users on delete cascade,role text not null default 'OWNER',primary key(studio_id,user_id));
+create table public.events(id uuid primary key default gen_random_uuid(),studio_id uuid not null references public.studios on delete cascade,slug text not null,couple text not null,event_date date,venue text,access public.event_access not null default 'PIN',pin_hash text,status public.event_status not null default 'DRAFT',album_limit int not null default 150,guest_uploads_enabled boolean not null default true,created_at timestamptz not null default now(),unique(studio_id,slug));
+create table public.photos(id uuid primary key default gen_random_uuid(),studio_id uuid not null references public.studios on delete cascade,event_id uuid not null references public.events on delete cascade,source public.photo_source not null,storage_path text not null,original_name text not null,mime_type text,size_bytes bigint,category text,title text,uploaded_at timestamptz not null default now());
+create table public.album_submissions(id uuid primary key default gen_random_uuid(),event_id uuid not null references public.events on delete cascade,submitted_at timestamptz not null default now(),unique(event_id));
+create table public.album_selection_items(submission_id uuid not null references public.album_submissions on delete cascade,photo_id uuid not null references public.photos on delete cascade,primary key(submission_id,photo_id));
+create table public.leads(id uuid primary key default gen_random_uuid(),studio_id uuid not null references public.studios on delete cascade,event_id uuid not null references public.events on delete cascade,source text not null default 'WHATSAPP',created_at timestamptz not null default now());
+create index photos_event_idx on public.photos(event_id,source);create index leads_studio_idx on public.leads(studio_id,created_at desc);
+alter table public.studios enable row level security;alter table public.studio_members enable row level security;alter table public.events enable row level security;alter table public.photos enable row level security;alter table public.album_submissions enable row level security;alter table public.album_selection_items enable row level security;alter table public.leads enable row level security;
+create or replace function public.is_studio_member(target uuid) returns boolean language sql stable security definer set search_path=public as $$select exists(select 1 from public.studio_members where studio_id=target and user_id=auth.uid())$$;
+create policy studio_member_studios on public.studios for select using(public.is_studio_member(id));
+create policy studio_member_events on public.events for all using(public.is_studio_member(studio_id)) with check(public.is_studio_member(studio_id));
+create policy studio_member_photos on public.photos for all using(public.is_studio_member(studio_id)) with check(public.is_studio_member(studio_id));
+create policy studio_member_leads on public.leads for select using(public.is_studio_member(studio_id));
