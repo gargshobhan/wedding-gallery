@@ -2,17 +2,17 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { loadEvents, saveEvents, WeddingEvent } from "@/lib/events";
+import { WeddingEvent } from "@/lib/events";
 import { uploadProfessionalPhoto } from "@/lib/storage";
 
 export default function EventManager({ id }: { id: string }) {
   const [item, setItem] = useState<WeddingEvent | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);const[loading,setLoading]=useState(true);const[pin,setPin]=useState("");const[pinSaved,setPinSaved]=useState(false);
   const [qr, setQr] = useState("");
   const [photoCount,setPhotoCount]=useState(0);const[downloadsEnabled,setDownloadsEnabled]=useState(false); const [uploading,setUploading]=useState(false); const [uploadError,setUploadError]=useState(""); const photoInput=useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setItem(loadEvents().find((event) => event.id === id) || null);
+    fetch("/api/studio/events",{cache:"no-store"}).then(r=>r.json()).then(x=>setItem(Array.isArray(x)?x.find((event:WeddingEvent)=>event.id===id)||null:null)).catch(()=>setItem(null)).finally(()=>setLoading(false));
   }, [id]);
 
   const galleryPath = item ? "/gallery/" + item.slug : "";
@@ -29,16 +29,18 @@ export default function EventManager({ id }: { id: string }) {
 
   useEffect(()=>{if(item)fetch("/api/events/"+item.slug+"/photos",{cache:"no-store"}).then(r=>r.json()).then(x=>{if(Array.isArray(x?.photos))setPhotoCount(x.photos.length);setDownloadsEnabled(!!x?.downloadsEnabled)}).catch(()=>{})},[item?.slug]);
 
+  if(loading)return <main className="emptyState"><h1>Loading wedding…</h1></main>;
   if (!item) {
     return <main className="emptyState"><h1>Event not found</h1><Link className="button" href="/studio">Back</Link></main>;
   }
 
-  function publish() {
+  async function publish() {
     if (!item) return;
     const next = { ...item, status: "Live" as const };
-    setItem(next);
-    saveEvents(loadEvents().map((event) => event.id === id ? next : event));
+    const r=await fetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({status:"Live"})});if(r.ok)setItem(next);
   }
+
+  async function savePin(){if(!item||!pin)return;const r=await fetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({pin})});if(r.ok){setItem({...item,pin});setPin("");setPinSaved(true);setTimeout(()=>setPinSaved(false),1500)}}
 
   async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await fetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}
 
@@ -70,7 +72,7 @@ export default function EventManager({ id }: { id: string }) {
       </div>
     </section>
     <section className="manageGrid">
-      <article className="manageCard"><span className="eyebrow">Gallery access</span><h3>{item.access.replace("_", " ")}</h3>{item.pin && <p>PIN: <b>{item.pin}</b></p>}<p className="mutedText">Print this QR at the venue or share the link on WhatsApp.</p></article>
+      <article className="manageCard"><span className="eyebrow">Gallery access</span><h3>{item.access.replace("_", " ")}</h3>{item.access==="PIN"&&<><p className="mutedText">Current PIN: <b>{item.pin||"Not set"}</b>. Set a new PIN below if needed.</p><div className="actions"><input aria-label="New gallery PIN" inputMode="numeric" minLength={4} maxLength={8} placeholder="New PIN" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,""))}/><button className="ghost" disabled={pin.length<4} onClick={savePin}>{pinSaved?"Saved!":"Set / reset PIN"}</button></div></>}<p className="mutedText">Print this QR at the venue or share the link on WhatsApp.</p></article>
       <article className="manageCard"><span className="eyebrow">Photos</span><h3>{photoCount} uploaded</h3><input ref={photoInput} hidden type="file" accept="image/*" multiple onChange={uploadPhotos}/><button className="button" disabled={uploading} onClick={()=>photoInput.current?.click()}>{uploading?"Uploading…":"Upload photographs"}</button>{uploadError&&<p className="mutedText">{uploadError}</p>}<p className="mutedText">Clients see reduced, watermarked proofs. Originals stay private.</p><label className="downloadToggle"><input type="checkbox" checked={downloadsEnabled} onChange={toggleDownloads}/> Allow clients to download original high-resolution photos</label></article>
       <article className="manageCard"><span className="eyebrow">Album</span><h3>Couple selection</h3><p>Review the exact photographs submitted by the couple and export the selection.</p><Link className="ghost" href={"/studio/events/"+id+"/album"}>Review album selection</Link></article>
       <article className="manageCard"><span className="eyebrow">Guests</span><h3>Guest uploads</h3><p>Review contributions from friends and family separately from professional photographs.</p><Link className="ghost" href={"/studio/events/"+id+"/guest-uploads"}>Review guest uploads</Link></article>

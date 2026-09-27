@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { loadEvents, saveEvents, slugify, WeddingEvent } from "@/lib/events";
+import { slugify, WeddingEvent } from "@/lib/events";
 
 export default function NewEvent() {
   const router = useRouter();
@@ -13,21 +13,13 @@ export default function NewEvent() {
   const [access, setAccess] = useState<WeddingEvent["access"]>("PIN");
   const [pin, setPin] = useState("");
 
-  function submit(e: FormEvent) {
+  const [error,setError]=useState("");
+  const [saving,setSaving]=useState(false);
+
+  async function submit(e: FormEvent) {
     e.preventDefault();
-    const item: WeddingEvent = {
-      id: Date.now().toString(),
-      slug: slugify(couple),
-      couple,
-      date,
-      venue,
-      access,
-      pin: access === "PIN" ? pin : undefined,
-      status: "Draft",
-      createdAt: new Date().toISOString(),
-    };
-    saveEvents([item, ...loadEvents()]);
-    router.push("/studio/events/" + item.id);
+    setSaving(true);setError("");
+    try{const r=await fetch("/api/studio/events",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({couple,slug:slugify(couple),date,venue,access,pin:access==="PIN"?pin:undefined})});const item=await r.json();if(!r.ok)throw new Error(item.error||"Unable to create wedding");router.push("/studio/events/"+item.id)}catch(err){setError(err instanceof Error?err.message:"Unable to create wedding")}finally{setSaving(false)}
   }
 
   return (
@@ -62,7 +54,7 @@ export default function NewEvent() {
           ))}
         </fieldset>
         {access === "PIN" && <label>Gallery PIN<input required minLength={4} maxLength={8} placeholder="4–8 digits" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} /></label>}
-        <button className="button wide" type="submit">Create wedding</button>
+        {error&&<p className="mutedText">{error}</p>}<button className="button wide" disabled={saving} type="submit">{saving?"Creating…":"Create wedding"}</button>
       </form>
     </main>
   );
