@@ -82,3 +82,14 @@ button.historyCard{font:inherit;text-align:left;color:inherit;cursor:pointer}.hi
 .adminCreateStudioButton{justify-self:start;min-width:220px;display:inline-flex;align-items:center;justify-content:center;text-align:center;padding:14px 24px;border:0;border-radius:999px;font:700 14px/1 inherit;letter-spacing:.01em;cursor:pointer}
 .adminCreateStudioButton:disabled{cursor:wait;opacity:.65}
 @media(max-width:520px){.adminCreateStudioButton{width:100%;justify-self:stretch}}
+
+/* Platform Admin sidebar refinement */
+.adminSide{padding:30px 32px}
+.adminSide nav{gap:5px;margin-top:34px}
+.adminSide nav a{display:flex;align-items:center;gap:12px;width:100%;padding:11px 10px;border-radius:9px;color:#d8d1c8;font-weight:600;font-size:15px;line-height:1.2;white-space:nowrap}
+.adminSide nav a:first-child{background:#24221e;color:#fff}
+.adminSide nav a:hover{background:#292722;color:#fff}
+.adminNavIcon{width:20px;height:20px;flex:0 0 20px;display:grid;place-items:center;border:0;border-radius:0;background:transparent;color:#c9ad8f}
+.adminNavIcon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.adminSide nav a:hover .adminNavIcon{background:transparent;border:0;color:#e0c3a0}
+.adminSide>button{width:100%;text-align:center}
