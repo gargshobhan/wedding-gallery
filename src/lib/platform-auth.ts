@@ -1,0 +1,3 @@
+import{NextRequest}from"next/server";import{createAdminClient}from"@/lib/supabase/admin";
+export async function requirePlatformAdmin(req:NextRequest){const token=req.headers.get("authorization")?.replace(/^Bearer\s+/i,"");if(!token)throw new Error("UNAUTHORIZED");const s=createAdminClient();const{data:{user},error}=await s.auth.getUser(token);if(error||!user)throw new Error("UNAUTHORIZED");const{data:admin,error:ae}=await s.from("platform_admins").select("role").eq("user_id",user.id).maybeSingle();if(ae)throw ae;if(!admin)throw new Error("FORBIDDEN");return{s,user,admin}}
+export function platformAuthStatus(e:unknown){return e instanceof Error&&e.message==="UNAUTHORIZED"?401:e instanceof Error&&e.message==="FORBIDDEN"?403:500}

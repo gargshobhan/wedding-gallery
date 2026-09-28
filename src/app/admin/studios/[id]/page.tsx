@@ -1,0 +1,1 @@
+import StudioDetail from"./StudioDetail";export default function Page({params}:{params:{id:string}}){return <StudioDetail id={params.id}/>}
