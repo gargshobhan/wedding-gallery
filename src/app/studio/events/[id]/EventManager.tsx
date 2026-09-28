@@ -1,6 +1,7 @@
 "use client";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import FramehavenLoading from "@/components/FramehavenLoading";
 import { studioFetch } from "@/lib/studio-fetch";
 import QRCode from "qrcode";
 import { WeddingEvent } from "@/lib/events";
@@ -30,7 +31,7 @@ export default function EventManager({ id }: { id: string }) {
 
   useEffect(()=>{if(item)fetch("/api/events/"+item.slug+"/photos",{cache:"no-store"}).then(r=>r.json()).then(x=>{if(Array.isArray(x?.photos))setPhotoCount(x.photos.length);setDownloadsEnabled(!!x?.downloadsEnabled)}).catch(()=>{})},[item?.slug]);
 
-  if(loading)return <main className="emptyState"><h1>Loading wedding…</h1></main>;
+  if(loading)return <FramehavenLoading message="Opening wedding control room…" />;
   if (!item) {
     return <main className="emptyState"><h1>Event not found</h1><Link className="button" href="/studio">Back</Link></main>;
   }
