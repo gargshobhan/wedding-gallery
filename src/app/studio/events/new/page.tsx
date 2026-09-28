@@ -26,7 +26,7 @@ export default function NewEvent() {
     <main className="formPage">
       <header className="simpleNav">
         <Link href="/studio">← Dashboard</Link>
-        <div className="brand">Yaadein</div>
+        <div className="brand">Framehaven</div>
         <span>New wedding</span>
       </header>
       <form className="eventForm" onSubmit={submit}>
