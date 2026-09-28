@@ -1,6 +1,7 @@
 "use client";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { studioFetch } from "@/lib/studio-fetch";
 import QRCode from "qrcode";
 import { WeddingEvent } from "@/lib/events";
 import { uploadProfessionalPhoto } from "@/lib/storage";
@@ -12,7 +13,7 @@ export default function EventManager({ id }: { id: string }) {
   const [photoCount,setPhotoCount]=useState(0);const[downloadsEnabled,setDownloadsEnabled]=useState(false); const [uploading,setUploading]=useState(false); const [uploadError,setUploadError]=useState(""); const photoInput=useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch("/api/studio/events",{cache:"no-store"}).then(r=>r.json()).then(x=>setItem(Array.isArray(x)?x.find((event:WeddingEvent)=>event.id===id)||null:null)).catch(()=>setItem(null)).finally(()=>setLoading(false));
+    studioFetch("/api/studio/events",{cache:"no-store"}).then(r=>r.json()).then(x=>setItem(Array.isArray(x)?x.find((event:WeddingEvent)=>event.id===id)||null:null)).catch(()=>setItem(null)).finally(()=>setLoading(false));
   }, [id]);
 
   const galleryPath = item ? "/gallery/" + item.slug : "";
@@ -37,12 +38,12 @@ export default function EventManager({ id }: { id: string }) {
   async function publish() {
     if (!item) return;
     const next = { ...item, status: "Live" as const };
-    const r=await fetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({status:"Live"})});if(r.ok)setItem(next);
+    const r=await studioFetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({status:"Live"})});if(r.ok)setItem(next);
   }
 
-  async function savePin(){if(!item||!pin)return;const r=await fetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({pin})});if(r.ok){setItem({...item,pin});setPin("");setPinSaved(true);setTimeout(()=>setPinSaved(false),1500)}}
+  async function savePin(){if(!item||!pin)return;const r=await studioFetch("/api/studio/events/"+id,{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({pin})});if(r.ok){setItem({...item,pin});setPin("");setPinSaved(true);setTimeout(()=>setPinSaved(false),1500)}}
 
-  async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await fetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}
+  async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await studioFetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}
 
   async function copy() {
     await navigator.clipboard.writeText(shareUrl);
