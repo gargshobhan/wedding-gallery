@@ -1,0 +1,2 @@
+import{NextRequest,NextResponse}from"next/server";import{requirePlatformAdmin,platformAuthStatus}from"@/lib/platform-auth";
+export async function GET(req:NextRequest){try{const{user,admin}=await requirePlatformAdmin(req);return NextResponse.json({user:{id:user.id,email:user.email},role:admin.role})}catch(e){const status=platformAuthStatus(e);return NextResponse.json({error:status===401?"Sign in required":status===403?"Platform administrator access denied":"Unable to verify administrator"},{status})}}
