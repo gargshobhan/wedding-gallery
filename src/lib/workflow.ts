@@ -2,7 +2,7 @@ import { event } from "@/lib/demo";
 export type Lead={id:string;eventSlug:string;source:"WhatsApp";createdAt:string};
 export type GuestUpload={id:string;eventSlug:string;name:string;createdAt:string};
 export type AlbumSubmission={eventSlug:string;photoIds:number[];submittedAt:string};
-const LEADS="yaadein-leads",UPLOADS="yaadein-guest-uploads",ALBUM="yaadein-album-submissions",FAVS="yaadein-favorites";
+const LEADS="framehaven-leads",UPLOADS="framehaven-guest-uploads",ALBUM="framehaven-album-submissions",FAVS="framehaven-favorites";
 function read<T>(key:string,fallback:T):T{if(typeof window==="undefined")return fallback;try{return JSON.parse(localStorage.getItem(key)||"null")??fallback}catch{return fallback}}
 function write<T>(key:string,value:T){localStorage.setItem(key,JSON.stringify(value))}
 export function trackWhatsApp(slug:string){const leads=read<Lead[]>(LEADS,[]);write(LEADS,[{id:Date.now().toString(),eventSlug:slug,source:"WhatsApp",createdAt:new Date().toISOString()},...leads])}
