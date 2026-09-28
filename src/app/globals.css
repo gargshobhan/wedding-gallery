@@ -93,3 +93,16 @@ button.historyCard{font:inherit;text-align:left;color:inherit;cursor:pointer}.hi
 .adminNavIcon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .adminSide nav a:hover .adminNavIcon{background:transparent;border:0;color:#e0c3a0}
 .adminSide>button{width:100%;text-align:center}
+
+/* Platform Admin sidebar balance */
+.adminShell{grid-template-columns:280px minmax(0,1fr)}
+.adminSide{padding:30px 28px}
+.adminSide nav{margin-top:42px;gap:8px}
+.adminSide nav a{box-sizing:border-box;width:100%;padding:12px 14px;gap:13px;border-radius:10px;font-size:15px;font-weight:600;white-space:nowrap;background:transparent;color:#d8d1c8}
+.adminSide nav a:first-child{background:transparent;color:#d8d1c8}
+.adminSide nav a.active{background:#26231f;color:#fff}
+.adminSide nav a:hover{background:#211f1b;color:#fff}
+.adminNavIcon{width:20px;height:20px;flex:0 0 20px;color:#c9ad8f}
+.adminNavIcon svg{width:18px;height:18px}
+.adminSide>button{width:100%;box-sizing:border-box}
+@media(max-width:800px){.adminShell{display:block}}
