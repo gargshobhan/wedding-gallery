@@ -53,7 +53,7 @@ export default function EventManager({ id }: { id: string }) {
   return <main className="managePage">
     <header className="simpleNav">
       <Link href="/studio">← Dashboard</Link>
-      <div className="brand">Yaadein</div>
+      <div className="brand">Framehaven</div>
       <span className={"pill " + (item.status === "Draft" ? "draft" : "")}>{item.status}</span>
     </header>
     <section className="manageHero">
