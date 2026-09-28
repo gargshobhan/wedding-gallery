@@ -1,0 +1,1 @@
+export default function FramehavenLoading({message="Loading…"}:{message?:string}){return <main className="framehavenLoading" aria-live="polite" aria-busy="true"><div className="framehavenLoadingInner"><div className="brand">Framehaven</div><span className="framehavenLoadingSpinner"/><p>{message}</p></div></main>}
