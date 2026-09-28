@@ -1,0 +1,4 @@
+-- Optional safe bootstrap using an environment-specific email is intentionally NOT automated.
+-- Platform administrator registration is closed: an existing SUPER_ADMIN must provision
+-- additional administrators, or the first administrator is inserted directly in SQL.
+-- This prevents public self-registration from ever granting platform privileges.
