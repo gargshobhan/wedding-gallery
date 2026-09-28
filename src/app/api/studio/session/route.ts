@@ -1,0 +1,2 @@
+import{NextRequest,NextResponse}from"next/server";import{requireStudioMember,authStatus}from"@/lib/studio-auth";
+export async function GET(req:NextRequest){try{const{user,membership}=await requireStudioMember(req);const studio=(membership as any).studios;return NextResponse.json({user:{id:user.id,email:user.email},studio,role:membership.role})}catch(e){return NextResponse.json({error:authStatus(e)===401?"Sign in required":"Studio access denied"},{status:authStatus(e)})}}
