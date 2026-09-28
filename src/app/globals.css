@@ -40,3 +40,6 @@ button.historyCard{font:inherit;text-align:left;color:inherit;cursor:pointer}.hi
 .historyLoading{min-height:300px;display:grid;place-items:center}
 .historyPhotos{min-height:300px;align-content:start}
 @media(max-width:700px){.historyModal{min-height:min(680px,90vh)}.historyLoading,.historyPhotos{min-height:260px}}
+
+/* Album review loading state prevents false empty/not-found flashes. */
+.albumSkeletonLabel{width:125px;height:13px;margin-bottom:14px}.albumSkeletonTitle{width:310px;max-width:70vw;height:56px}.albumSkeletonMeta{height:78px;margin:25px 0;border-radius:18px}.albumSkeletonPhoto{height:320px;border-radius:16px}
