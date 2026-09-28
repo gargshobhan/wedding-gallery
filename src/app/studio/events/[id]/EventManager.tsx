@@ -9,7 +9,7 @@ import { uploadProfessionalPhoto } from "@/lib/storage";
 
 export default function EventManager({ id }: { id: string }) {
   const [item, setItem] = useState<WeddingEvent | null>(null);
-  const [copied, setCopied] = useState(false);const[loading,setLoading]=useState(true);const[pin,setPin]=useState("");const[pinSaved,setPinSaved]=useState(false);
+  const [copied, setCopied] = useState(false);const[coupleCopied,setCoupleCopied]=useState(false);const[coupleInviteBusy,setCoupleInviteBusy]=useState(false);const[loading,setLoading]=useState(true);const[pin,setPin]=useState("");const[pinSaved,setPinSaved]=useState(false);
   const [qr, setQr] = useState("");
   const [photoCount,setPhotoCount]=useState(0);const[downloadsEnabled,setDownloadsEnabled]=useState(false); const [uploading,setUploading]=useState(false); const [uploadError,setUploadError]=useState(""); const photoInput=useRef<HTMLInputElement>(null);
 
@@ -46,6 +46,8 @@ export default function EventManager({ id }: { id: string }) {
 
   async function toggleDownloads(){if(!item)return;const next=!downloadsEnabled;const r=await studioFetch("/api/studio/events/"+id+"/download-settings",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify({enabled:next,eventSlug:item.slug})});if(r.ok)setDownloadsEnabled(next)}
 
+  async function copyCoupleInvite(){if(!item)return;setCoupleInviteBusy(true);try{const r=await studioFetch("/api/studio/events/"+id+"/couple-invite",{method:"POST"});const x=await r.json();if(!r.ok)throw new Error(x.error||"Unable to create invitation");await navigator.clipboard.writeText(window.location.origin+x.path);setCoupleCopied(true);setTimeout(()=>setCoupleCopied(false),1800)}finally{setCoupleInviteBusy(false)}}
+
   async function copy() {
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
@@ -76,7 +78,7 @@ export default function EventManager({ id }: { id: string }) {
     <section className="manageGrid">
       <article className="manageCard"><span className="eyebrow">Gallery access</span><h3>{item.access.replace("_", " ")}</h3>{item.access==="PIN"&&<><p className="mutedText">Current PIN: <b>{item.pin||"Not set"}</b>. Set a new PIN below if needed.</p><div className="actions"><input aria-label="New gallery PIN" inputMode="numeric" minLength={4} maxLength={8} placeholder="New PIN" value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,""))}/><button className="ghost" disabled={pin.length<4} onClick={savePin}>{pinSaved?"Saved!":"Set / reset PIN"}</button></div></>}<p className="mutedText">Print this QR at the venue or share the link on WhatsApp.</p></article>
       <article className="manageCard"><span className="eyebrow">Photos</span><h3>{photoCount} uploaded</h3><input ref={photoInput} hidden type="file" accept="image/*" multiple onChange={uploadPhotos}/><button className="button" disabled={uploading} onClick={()=>photoInput.current?.click()}>{uploading?"Uploading…":"Upload photographs"}</button>{uploadError&&<p className="mutedText">{uploadError}</p>}<p className="mutedText">Clients see reduced, watermarked proofs. Originals stay private.</p><label className="downloadToggle"><input type="checkbox" checked={downloadsEnabled} onChange={toggleDownloads}/> Allow clients to download original high-resolution photos</label></article>
-      <article className="manageCard"><span className="eyebrow">Album</span><h3>Couple selection</h3><p>Review the exact photographs submitted by the couple and export the selection.</p><Link className="ghost" href={"/studio/events/"+id+"/album"}>Review album selection</Link></article>
+      <article className="manageCard"><span className="eyebrow">Album</span><h3>Couple selection</h3><p>Share a private invitation for album selection. Creating a new link replaces the previous invitation.</p><div className="actions"><button className="ghost" disabled={coupleInviteBusy} onClick={copyCoupleInvite}>{coupleInviteBusy?"Creating…":coupleCopied?"Copied private link!":"Copy couple invitation"}</button><Link className="ghost" href={"/studio/events/"+id+"/album"}>Review selection</Link></div></article>
       <article className="manageCard"><span className="eyebrow">Guests</span><h3>Guest uploads</h3><p>Review contributions from friends and family separately from professional photographs.</p><Link className="ghost" href={"/studio/events/"+id+"/guest-uploads"}>Review guest uploads</Link></article>
     </section>
   </main>;
