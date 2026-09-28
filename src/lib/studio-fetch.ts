@@ -1,0 +1,2 @@
+import{createBrowserClient}from"@/lib/supabase/browser";
+export async function studioFetch(input:RequestInfo|URL,init:RequestInit={}){const s=createBrowserClient();const{data}=await s.auth.getSession();const token=data.session?.access_token;if(!token){window.location.replace("/studio/login");throw new Error("Sign in required")}const headers=new Headers(init.headers);headers.set("authorization","Bearer "+token);const r=await fetch(input,{...init,headers});if(r.status===401||r.status===403){await s.auth.signOut();window.location.replace("/studio/login")}return r}
