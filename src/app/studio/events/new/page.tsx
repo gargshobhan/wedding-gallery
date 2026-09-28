@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { studioFetch } from "@/lib/studio-fetch";
 import { slugify, WeddingEvent } from "@/lib/events";
 
 export default function NewEvent() {
@@ -19,7 +20,7 @@ export default function NewEvent() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);setError("");
-    try{const r=await fetch("/api/studio/events",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({couple,slug:slugify(couple),date,venue,access,pin:access==="PIN"?pin:undefined})});const item=await r.json();if(!r.ok)throw new Error(item.error||"Unable to create wedding");router.push("/studio/events/"+item.id)}catch(err){setError(err instanceof Error?err.message:"Unable to create wedding")}finally{setSaving(false)}
+    try{const r=await studioFetch("/api/studio/events",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({couple,slug:slugify(couple),date,venue,access,pin:access==="PIN"?pin:undefined})});const item=await r.json();if(!r.ok)throw new Error(item.error||"Unable to create wedding");router.push("/studio/events/"+item.id)}catch(err){setError(err instanceof Error?err.message:"Unable to create wedding")}finally{setSaving(false)}
   }
 
   return (
