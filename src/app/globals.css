@@ -10,3 +10,33 @@
 
 /* Gallery loading skeleton */
 .shimmer{display:block;position:relative;overflow:hidden;background:#ece7df;border-radius:8px}.shimmer::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.58),transparent);animation:galleryShimmer 1.35s infinite}.skeletonHero{min-height:72vh}.skeletonBrand{width:150px;height:20px}.skeletonLocation{width:110px;height:14px}.skeletonDate{width:135px;height:16px;margin-bottom:18px}.skeletonTitle{width:min(430px,72vw);height:64px;margin-bottom:18px}.skeletonSubtitle{width:min(320px,62vw);height:18px}.skeletonLabel{width:105px;height:13px;margin-bottom:12px}.skeletonHeading{width:180px;height:32px}.skeletonPhoto{height:390px;margin-bottom:18px;border-radius:14px}.skeletonMasonry .skeletonPhoto:nth-child(2n){height:300px}.skeletonMasonry .skeletonPhoto:nth-child(3n){height:470px}@keyframes galleryShimmer{100%{transform:translateX(100%)}}@media(prefers-reduced-motion:reduce){.shimmer::after{animation:none}}
+
+/* Couple photo cards keep download actions in normal flow so grid rows cannot overlap. */
+.selectPhotoWrap{display:flex;flex-direction:column;min-width:0;background:white;border:1px solid #e2dbd1;border-radius:10px;overflow:hidden}
+.selectPhotoWrap .selectPhoto{height:330px;flex:none}
+.selectPhotoWrap .selectPhoto img{height:100%;object-fit:cover}
+.photoDownloadActions{min-height:52px;padding:9px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;background:white;border-top:1px solid #eee7de}
+.photoDownloadActions .photoDownload{position:static!important;inset:auto!important;display:inline-flex;align-items:center;gap:6px;margin:0;white-space:nowrap}
+.historyButton{margin:0 0 22px}
+.historyOverlay{position:fixed;inset:0;z-index:20;background:rgba(33,31,27,.45);display:grid;place-items:center;padding:24px}
+.historyModal{width:min(900px,100%);background:#f7f5f0;border-radius:24px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.22)}
+.historyHeader{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.historyHeader h2{font-size:38px;margin:6px 0 18px}
+.historyCarousel{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 12px;scroll-snap-type:x mandatory}
+.historyCard{flex:0 0 240px;scroll-snap-align:start;background:white;border:1px solid #e2dbd1;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:9px}
+.historyCard strong{font-family:Georgia,serif;font-size:25px}.historyCard small{color:#777066}
+@media(max-width:700px){.selectPhotoWrap .selectPhoto{height:240px}.photoDownloadActions{align-items:stretch;flex-direction:column}.photoDownloadActions .photoDownload{justify-content:center}.historyModal{padding:20px}.historyHeader h2{font-size:30px}}
+@media(max-width:520px){.selectPhotoWrap .selectPhoto{height:auto}.selectPhotoWrap .selectPhoto img{height:auto}}
+
+.historyModal{max-height:90vh;overflow:auto}
+button.historyCard{font:inherit;text-align:left;color:inherit;cursor:pointer}.historyCard.active{outline:3px solid #8d6a48;outline-offset:-3px;background:#fffaf3}
+.historyLoading{padding:35px;text-align:center;color:#777066}
+.historyDetailHead{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:22px 0 14px}.historyDetailHead>div:first-child{display:flex;flex-direction:column;gap:5px}
+.historyFilters{display:flex;gap:7px;flex-wrap:wrap}.historyFilters button{border:1px solid #d8d0c5;background:white;border-radius:999px;padding:8px 12px;cursor:pointer}.historyFilters button.active{background:#211f1b;color:white;border-color:#211f1b}
+.historyPhotos{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.historyPhoto{background:white;border:1px solid #e2dbd1;border-radius:12px;overflow:hidden}.historyImage{position:relative}.historyImage img{width:100%;height:145px;object-fit:cover;display:block}.historyImage span{position:absolute;left:8px;bottom:8px;background:#211f1b;color:white;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:800}.historyPhoto>small{display:block;padding:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.historyPhoto.added{outline:2px solid #7b9b76;outline-offset:-2px}.historyPhoto.removed{opacity:.72;outline:2px dashed #9a746b;outline-offset:-2px}
+@media(max-width:700px){.historyDetailHead{align-items:flex-start;flex-direction:column}.historyPhotos{grid-template-columns:repeat(2,1fr)}}
+
+/* Keep revision detail viewport stable while a newly selected revision is loading. */
+.historyModal{min-height:min(720px,90vh)}
+.historyLoading{min-height:300px;display:grid;place-items:center}
+.historyPhotos{min-height:300px;align-content:start}
+@media(max-width:700px){.historyModal{min-height:min(680px,90vh)}.historyLoading,.historyPhotos{min-height:260px}}
