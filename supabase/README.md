@@ -1,4 +1,4 @@
-# Yaadein backend setup
+# Framehaven backend setup
 
 1. Create a Supabase project.
 2. Run migrations in `supabase/migrations` in order using the Supabase SQL editor or CLI.
