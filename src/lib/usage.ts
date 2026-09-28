@@ -1,0 +1,1 @@
+import{createAdminClient}from"@/lib/supabase/admin";export async function recordUsage(studioId:string,eventId:string|undefined,kind:string,bytes?:number,metadata:Record<string,unknown>={}){try{const s=createAdminClient();await s.from("usage_events").insert({studio_id:studioId,event_id:eventId||null,kind,bytes:bytes??null,metadata})}catch(e){console.error("usage_event_failed",e)}}
