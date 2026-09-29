@@ -106,3 +106,8 @@ button.historyCard{font:inherit;text-align:left;color:inherit;cursor:pointer}.hi
 .adminNavIcon svg{width:18px;height:18px}
 .adminSide>button{width:100%;box-sizing:border-box}
 @media(max-width:800px){.adminShell{display:block}}
+
+/* Platform Admin sidebar final alignment */
+.adminSide nav a{padding-left:0;padding-right:8px;border-radius:8px}
+.adminSide nav a.active{padding-left:12px;margin-left:-12px;width:calc(100% + 12px)}
+.adminSide nav a:not(.active){padding-left:12px;margin-left:-12px}
