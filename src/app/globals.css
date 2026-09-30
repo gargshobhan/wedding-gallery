@@ -118,3 +118,6 @@ button.historyCard{font:inherit;text-align:left;color:inherit;cursor:pointer}.hi
 
 /* Tenant-specific studio workspace branding */
 .dashboard{--studio-primary:#211f1b;--studio-accent:#8d6a48}.dashboard aside{background:var(--studio-primary)}.dashboard .button{background:var(--studio-primary)}.dashboard .eyebrow{color:var(--studio-accent)}.dashboard .menu em{background:var(--studio-accent)}.studioDashboardLogo{display:block;max-width:175px;max-height:58px;object-fit:contain}
+
+/* Destructive lifecycle controls */
+.dangerZone{max-width:1100px;margin:35px auto 80px;padding:24px;border:1px solid #e8c7c1;background:#fff8f6;border-radius:18px}.adminDetail>.dangerZone{max-width:none;margin:24px 0}.dangerZone h2{font-size:30px;font-weight:400;margin:8px 0}.dangerZone p{color:#746b60;max-width:720px}.dangerButton{border:1px solid #b65346;background:#fff;color:#963f34;border-radius:999px;padding:11px 16px;font-weight:700;cursor:pointer}.dangerButton:hover{background:#963f34;color:#fff}

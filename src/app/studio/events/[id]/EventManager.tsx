@@ -1,5 +1,6 @@
 "use client";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FramehavenLoading from "@/components/FramehavenLoading";
 import { studioFetch } from "@/lib/studio-fetch";
@@ -8,6 +9,7 @@ import { WeddingEvent } from "@/lib/events";
 import { uploadProfessionalPhoto } from "@/lib/storage";
 
 export default function EventManager({ id }: { id: string }) {
+  const router=useRouter();
   const [item, setItem] = useState<WeddingEvent | null>(null);
   const [copied, setCopied] = useState(false);const[coupleCopied,setCoupleCopied]=useState(false);const[coupleInviteBusy,setCoupleInviteBusy]=useState(false);const[loading,setLoading]=useState(true);const[pin,setPin]=useState("");const[pinSaved,setPinSaved]=useState(false);
   const [qr, setQr] = useState("");
@@ -54,6 +56,8 @@ export default function EventManager({ id }: { id: string }) {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  async function deleteWedding(){if(!item)return;const typed=window.prompt(`Permanent deletion removes the wedding, photos, downloads, leads and album data. Type DELETE ${item.couple} to continue.`);if(typed!==`DELETE ${item.couple}`)return;const r=await studioFetch("/api/studio/events/"+id,{method:"DELETE"});if(r.ok)router.replace("/studio");else alert((await r.json()).error||"Unable to delete wedding")}
+
   return <main className="managePage">
     <header className="simpleNav">
       <Link href="/studio">← Dashboard</Link>
@@ -81,5 +85,6 @@ export default function EventManager({ id }: { id: string }) {
       <article className="manageCard"><span className="eyebrow">Album</span><h3>Couple selection</h3><p>Share a private invitation for album selection. Creating a new link replaces the previous invitation.</p><div className="actions"><button className="ghost" disabled={coupleInviteBusy} onClick={copyCoupleInvite}>{coupleInviteBusy?"Creating…":coupleCopied?"Copied private link!":"Copy couple invitation"}</button><Link className="ghost" href={"/studio/events/"+id+"/album"}>Review selection</Link></div></article>
       <article className="manageCard"><span className="eyebrow">Guests</span><h3>Guest uploads</h3><p>Review contributions from friends and family separately from professional photographs.</p><Link className="ghost" href={"/studio/events/"+id+"/guest-uploads"}>Review guest uploads</Link></article>
     </section>
+    <section className="dangerZone"><span className="eyebrow">Danger zone</span><h2>Delete wedding</h2><p>Permanently removes this wedding and its stored photos, generated downloads, leads and album data.</p><button className="dangerButton" onClick={deleteWedding}>Delete wedding permanently</button></section>
   </main>;
 }
