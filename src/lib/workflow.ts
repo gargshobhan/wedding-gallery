@@ -9,8 +9,8 @@ export function trackWhatsApp(slug:string){const leads=read<Lead[]>(LEADS,[]);wr
 export function getLeads(){return read<Lead[]>(LEADS,[])}
 export function addGuestUploads(slug:string,files:File[]){const uploads=read<GuestUpload[]>(UPLOADS,[]);const next=files.map((f,i)=>({id:Date.now()+"-"+i,eventSlug:slug,name:f.name,createdAt:new Date().toISOString()}));write(UPLOADS,[...next,...uploads]);return next.length}
 export function getGuestUploads(){return read<GuestUpload[]>(UPLOADS,[])}
-export function saveFavorites(slug:string,ids:number[]){const all=read<Record<string,number[]>>(FAVS,{});all[slug]=ids;write(FAVS,all)}
-export function getFavorites(slug:string){return read<Record<string,number[]>>(FAVS,{})[slug]||[]}
+export function saveFavorites(slug:string,ids:string[]){const all=read<Record<string,string[]>>(FAVS,{});all[slug]=ids;write(FAVS,all)}
+export function getFavorites(slug:string){const ids=read<Record<string,Array<string|number>>>(FAVS,{})[slug]||[];return ids.map(String)}
 export function submitAlbum(slug:string,photoIds:number[]){const all=read<Record<string,AlbumSubmission>>(ALBUM,{});all[slug]={eventSlug:slug,photoIds,submittedAt:new Date().toISOString()};write(ALBUM,all)}
 export function getAlbum(slug:string){return read<Record<string,AlbumSubmission>>(ALBUM,{})[slug]}
 export const demoPhotos=event.photos;
